@@ -34,3 +34,7 @@ The application has the following dependencies:
 
 ## Flowchart of the Program
 ![RSA Python Messaging App Flowchart](https://github.com/sehae/RSA-Python-Messaging-App/assets/106131457/b7e35540-05f7-40f6-9c29-54d9863c85ad)
+
+## Final Project for Information Assurance and Security
+
+The application was developed as one of the applications proposed for the final project in the Information Assurance and Security course. It demonstrates the implementation of secure communication principles using RSA encryption for end-to-end encryption.
