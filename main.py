@@ -1,7 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from menu import Ui_MainWindow as MenuUI
-from chat import ChatWindow
+from chat import ChatWindow, LogWindow
+
 
 class MenuWindow(QMainWindow, MenuUI):
     def __init__(self):
@@ -18,6 +19,10 @@ class MenuWindow(QMainWindow, MenuUI):
                 self.chat_window = ChatWindow(screen_name)
                 self.chat_window.show()
                 self.screen_name.clear()
+
+    def closeEvent(self, event):
+        ChatWindow.close_all()
+        event.accept()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -186,7 +186,7 @@ class ChatWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             for window in self.chat_windows:
                 if window != self:
-                    window.receive_message(self.screen_name, self.public_key, encrypted_messages)  # Pass sender's screen name
+                    window.receive_message(self.screen_name, self.public_key, encrypted_messages)
 
             self.send_button.clear()
 
@@ -227,3 +227,5 @@ class ChatWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def close_all(cls):
         for window in cls.chat_windows:
             window.close()
+        for log_window in cls.log_windows:
+            log_window.close()
