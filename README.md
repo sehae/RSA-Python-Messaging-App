@@ -33,7 +33,8 @@ The application has the following dependencies:
 - cryptography
 
 ## Flowchart of the Program
-![RSA Python Messaging App Flowchart](https://github.com/sehae/RSA-Python-Messaging-App/assets/106131457/b7e35540-05f7-40f6-9c29-54d9863c85ad)
+![RSA Python Messaging App Flowchart](https://github.com/sehae/RSA-Python-Messaging-App/assets/106131457/d2a2ee7f-9564-4a80-af71-94baa6cedf60)
+
 
 ## Final Project for Information Assurance and Security
 
