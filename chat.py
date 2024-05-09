@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from base64 import b64encode, b64decode
+from logwindow import LogWindow
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -113,76 +114,34 @@ class Ui_MainWindow(object):
         self.send_button.setPlaceholderText(_translate("MainWindow", "Write a message..."))
         self.message_input.setText(_translate("MainWindow", "Send"))
 
-
-class LogWindow(QtWidgets.QWidget):
-    def __init__(self):
-        super(LogWindow, self).__init__()
-        self.setWindowTitle("System Logs")
-        self.setStyleSheet("background-color: #333333; color: #CCCCCC;")
-        self.log_text = QtWidgets.QTextEdit(self)
-        self.log_text.setReadOnly(True)
-        self.clear_button = QtWidgets.QPushButton("Clear", self)
-        self.clear_button.setStyleSheet("background-color: #FFFFFF; color: #000000;")
-        self.clear_button.clicked.connect(self.clear_logs)
-
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(self.log_text)
-        layout.addWidget(self.clear_button)
-        self.setLayout(layout)
-
-    def append_log(self, log):
-        screen_name, message = log.split("]", 1)
-        screen_name += "]"
-
-        if "Encrypted" in message:
-            message_color = QtGui.QColor('#FF0000')
-        elif "Decrypted" in message:
-            message_color = QtGui.QColor('#00FF00')
-        else:
-            message_color = QtGui.QColor('#FFFFFF')
-
-        screen_name_color = QtGui.QColor('#64B5F6')
-
-        formatted_screen_name = f"<font color='{screen_name_color.name()}'>{screen_name}</font>"
-        formatted_message = f"<font color='{message_color.name()}'>{message}</font>"
-
-        self.log_text.insertHtml(formatted_screen_name + formatted_message + "<br>")
-
-        self.log_text.moveCursor(QtGui.QTextCursor.End)
-
-    def clear_logs(self):
-        self.log_text.clear()
-
-
 class ChatWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     chat_windows = []
-    log_window = None
 
-    def __init__(self, screen_name):
+    def __init__(self, screen_name, log_window):
         super(ChatWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle(f"Welcome {screen_name} to PairPal")
         self.screen_name = screen_name
         self.chat_windows.append(self)
+        self.log_window = log_window
 
         self.key_pair = RSA.generate(2048)
         self.public_key = self.key_pair.publickey()
 
-        if ChatWindow.log_window is None:
-            ChatWindow.log_window = LogWindow()
-            ChatWindow.log_window.show()
-
-        ChatWindow.log_window.append_log(f"[{self.screen_name}] Key pair generated.")
+        if self.log_window is not None:
+            self.log_window.append_log(f"[{self.screen_name}] Key pair generated.", '#FFFFFF')
 
     def send_message(self):
         message = self.send_button.toPlainText()
         if message:
             encrypted_messages = self.encrypt_message(message)
-            ChatWindow.log_window.append_log(f"[{self.screen_name}] SENT Encrypted messages: {encrypted_messages}")
+            if self.log_window is not None:
+                self.log_window.append_log(f"[{self.screen_name}] SENT Encrypted messages: {encrypted_messages}", '#FF0000')
 
             self.append_to_chat_history(f"You: {message}")
 
-            ChatWindow.log_window.append_log(f"[{self.screen_name}] Sent message: {message}")
+            if self.log_window is not None:
+                self.log_window.append_log(f"[{self.screen_name}] Sent message: {message}", '#FFFFFF')
 
             for window in self.chat_windows:
                 if window != self:
@@ -191,10 +150,12 @@ class ChatWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.send_button.clear()
 
     def receive_message(self, sender_screen_name, sender_public_key, encrypted_messages):
-        ChatWindow.log_window.append_log(f"[{sender_screen_name}] RECEIVED Encrypted messages: {encrypted_messages}")
+        if self.log_window is not None:
+            self.log_window.append_log(f"[{sender_screen_name}] RECEIVED Encrypted messages: {encrypted_messages}", '#FF0000')
         decrypted_messages = self.decrypt_message(encrypted_messages)
         for decrypted_message in decrypted_messages:
-            ChatWindow.log_window.append_log(f"[{sender_screen_name}] Decrypted message: '{decrypted_message}'")
+            if self.log_window is not None:
+                self.log_window.append_log(f"[{sender_screen_name}] Decrypted message: '{decrypted_message}'", '#00FF00')
             if decrypted_message and decrypted_message != 'You':
                 self.append_to_chat_history(f"{sender_screen_name}: {decrypted_message}")
 
@@ -227,5 +188,3 @@ class ChatWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def close_all(cls):
         for window in cls.chat_windows:
             window.close()
-        for log_window in cls.log_windows:
-            log_window.close()

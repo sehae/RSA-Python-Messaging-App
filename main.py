@@ -9,6 +9,7 @@ class MenuWindow(QMainWindow, MenuUI):
         super(MenuWindow, self).__init__()
         self.setupUi(self)
         self.join_button.clicked.connect(self.open_chat)
+        self.log_window = None
 
     def open_chat(self):
         if len(ChatWindow.chat_windows) >= 2:
@@ -16,9 +17,10 @@ class MenuWindow(QMainWindow, MenuUI):
         else:
             screen_name = self.screen_name.text().strip()
             if screen_name:
-                self.chat_window = ChatWindow(screen_name)
+                self.chat_window = ChatWindow(screen_name, self.log_window)
                 self.chat_window.show()
                 self.screen_name.clear()
+
 
     def closeEvent(self, event):
         ChatWindow.close_all()

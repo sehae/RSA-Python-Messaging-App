@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from logwindow import LogWindow
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -65,6 +65,12 @@ class Ui_MainWindow(object):
 "")
         self.join_button.setObjectName("join_button")
         self.verticalLayout.addWidget(self.join_button)
+
+        # Add a new button to open the password window
+        self.password_button = QtWidgets.QPushButton(self.centralwidget)
+        self.password_button.clicked.connect(self.open_password_window)
+        self.verticalLayout.addWidget(self.password_button)
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -76,3 +82,29 @@ class Ui_MainWindow(object):
         self.title_label.setText(_translate("MainWindow", "PairPal"))
         self.screen_name.setPlaceholderText(_translate("MainWindow", "Enter your Screen Name"))
         self.join_button.setText(_translate("MainWindow", "Join"))
+        self.password_button.setText(_translate("MainWindow", "Open Password Window"))
+
+    def open_password_window(self):
+        self.password_window = QtWidgets.QWidget()
+        self.password_window.setWindowTitle("Enter Password")
+
+        self.password_field = QtWidgets.QLineEdit(self.password_window)
+        self.password_field.setEchoMode(QtWidgets.QLineEdit.Password)
+
+        self.log_button = QtWidgets.QPushButton("Open Log Window", self.password_window)
+        self.log_button.clicked.connect(self.check_password)
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self.password_field)
+        layout.addWidget(self.log_button)
+        self.password_window.setLayout(layout)
+
+        self.password_window.show()
+
+    def check_password(self):
+        if self.password_field.text() == "admin123":
+            self.log_window = LogWindow()
+            self.log_window.show()
+            self.password_window.close()
+        else:
+            QtWidgets.QMessageBox.warning(self.password_window, "Error", "Incorrect password.")
