@@ -82,7 +82,7 @@ class Ui_MainWindow(object):
         self.title_label.setText(_translate("MainWindow", "PairPal"))
         self.screen_name.setPlaceholderText(_translate("MainWindow", "Enter your Screen Name"))
         self.join_button.setText(_translate("MainWindow", "Join"))
-        self.password_button.setText(_translate("MainWindow", "Open Password Window"))
+        self.password_button.setText(_translate("MainWindow", "Open Log Window"))
 
     def open_password_window(self):
         self.password_window = QtWidgets.QWidget()
@@ -91,7 +91,7 @@ class Ui_MainWindow(object):
         self.password_field = QtWidgets.QLineEdit(self.password_window)
         self.password_field.setEchoMode(QtWidgets.QLineEdit.Password)
 
-        self.log_button = QtWidgets.QPushButton("Open Log Window", self.password_window)
+        self.log_button = QtWidgets.QPushButton("Open", self.password_window)
         self.log_button.clicked.connect(self.check_password)
 
         layout = QtWidgets.QVBoxLayout()
